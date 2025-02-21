@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:green_chat/core/constants/strings.dart';
+import 'package:green_chat/core/models/user_model.dart';
+import 'package:green_chat/ui/screens/SplashScreen.dart';
 import 'package:green_chat/ui/screens/auth/Login/login_screen.dart';
 import 'package:green_chat/ui/screens/auth/signup/sign_up_screen.dart';
 import 'package:green_chat/ui/screens/bottom_navigation/chat_list/chat_room/chat_screen.dart';
 import 'package:green_chat/ui/screens/home/homescreen.dart';
-import 'package:green_chat/ui/screens/splash/splash_screen.dart';
 import 'package:green_chat/ui/screens/wrapper/wrapper.dart';
 
 class RouteUtils {
@@ -23,7 +24,7 @@ class RouteUtils {
       case wrapper:
         return MaterialPageRoute(builder: (context) => Wrapper());
       case chatRoom:
-        return MaterialPageRoute(builder: (context) => ChatScreen());
+        return MaterialPageRoute(builder: (context) => ChatScreen(reciver: args as UserModel,));
 
       default:
         return MaterialPageRoute(

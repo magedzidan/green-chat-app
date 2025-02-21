@@ -1,67 +1,93 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:green_chat/core/constants/colors.dart';
 import 'package:green_chat/core/constants/styles.dart';
+import 'package:green_chat/core/models/message_model.dart';
+import 'package:green_chat/core/models/user_model.dart';
+import 'package:green_chat/core/services/chat_service.dart';
+import 'package:green_chat/ui/screens/bottom_navigation/chat_list/chat_room/chat_screen_view_model.dart';
+import 'package:green_chat/ui/screens/other/user_provider.dart';
 import 'package:green_chat/ui/widgets/text_form_field.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
-
+  const ChatScreen({super.key, required this.reciver});
+  final UserModel reciver;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          40.verticalSpace,
-          Expanded(
-            child: Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 1.sw * 0.05, vertical: 10.h),
-              child: Column(
-                children: [
-                  _buildHeader(context,name: "Ava Adams"),
-                  15.verticalSpace,
-                  Expanded(
-                    child: ListView.separated(
-                        padding: EdgeInsets.all(0),
-                        itemBuilder: (context, index) {
-                          return chatBubble();
-                        },
-                        separatorBuilder: (context, index) => 10.verticalSpace,
-                        itemCount: 5),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            color: Color.fromARGB(255, 235, 233, 233),
-            padding:
-                EdgeInsets.symmetric(horizontal: 1.sw * 0.05, vertical: 25.h),
-            child: Row(
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    return ChangeNotifierProvider<ChatScreenViewModel>(
+        create: (context) =>
+            ChatScreenViewModel(ChatService(), currentUser!, reciver,),
+        child: Consumer<ChatScreenViewModel>(builder: (context, model, _) {
+          return Scaffold(
+            body: Column(
               children: [
-                InkWell(
-                  onTap: () {},
-                  child: CircleAvatar(
-                      radius: 20.r,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.add)),
-                ),
-                10.horizontalSpace,
+                40.verticalSpace,
                 Expanded(
-                    child: CustomFormField(
-                  isWhite: true,
-                  hintText: "Write message...",
-                )),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 1.sw * 0.05, vertical: 10.h),
+                    child: Column(
+                      children: [
+                        _buildHeader(context, name: reciver.name!),
+                        15.verticalSpace,
+                        Expanded(
+                          child: ListView.separated(
+                              padding: EdgeInsets.all(0),
+                              itemBuilder: (context, index) {
+                                final message = model.messages[index];
+                                return chatBubble(
+                                  isCurrentUser: message.senderId==currentUser!.uid,
+                                  message: message,
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                                  10.verticalSpace,
+                              itemCount: model.messages.length),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Color.fromARGB(255, 235, 233, 233),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 1.sw * 0.05, vertical: 25.h),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {},
+                        child: CircleAvatar(
+                            radius: 20.r,
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.add)),
+                      ),
+                      10.horizontalSpace,
+                      Expanded(
+                          child: CustomFormField(
+                        sendTap: true,
+                        ontap: () {
+                          if (model.controller.text != "") {
+                            model.saveMessage();
+                          }
+                        },
+                        controller: model.controller,
+                        isWhite: true,
+                        hintText: "Write message...",
+                      )),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        }));
   }
 
-  Row _buildHeader(BuildContext Context,{String name = ""}) {
+  Row _buildHeader(BuildContext Context, {String name = ""}) {
     return Row(
       children: [
         InkWell(
@@ -104,10 +130,11 @@ class ChatScreen extends StatelessWidget {
 class chatBubble extends StatelessWidget {
   const chatBubble({
     super.key,
-    this.isCurrentUser = true,
+    this.isCurrentUser = true, required this.message,
   });
 
   final bool isCurrentUser;
+  final Message message;
   @override
   Widget build(BuildContext context) {
     final aligment =
@@ -134,12 +161,12 @@ class chatBubble extends StatelessWidget {
               isCurrentUser ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
             Text(
-              'data dddldlddlllllllllllllllllll rrrr r llll dkkkkkkkkkkkkkkdd ddd dd dd kkkk',
+              message.content!,
               style: body.copyWith(
                   color: isCurrentUser ? Colors.white : Colors.black),
             ),
             5.verticalSpace,
-            Text('08:00 PM',
+            Text(message.timeStamp.toString(),
                 style: isCurrentUser
                     ? small.copyWith(color: Colors.white.withOpacity(0.8))
                     : small.copyWith(

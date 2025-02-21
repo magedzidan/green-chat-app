@@ -31,6 +31,7 @@ class LoginScreenViewmodel extends BaseViewModle {
       setState(ViewState.idle);
 
       _logger.i(e.toString());
+      rethrow;
     }
   }
 }

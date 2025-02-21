@@ -54,7 +54,7 @@ class ChatListScreen extends StatelessWidget {
                             return ChatTile(
                               user: user,
                               onTap: () =>
-                                  Navigator.pushNamed(context, chatRoom),
+                                  Navigator.pushNamed(context, chatRoom,arguments: user),
                             );
                           }),
                     )
