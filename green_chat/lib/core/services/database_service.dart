@@ -28,4 +28,18 @@ class DatabaseSerice {
     }
     return null;
   }
+
+  Future<List<Map<String, dynamic>?>> fetchUsers(String currentUserId) async {
+    try {
+      final res = await _fire
+          .collection("users")
+          .where("uid", isNotEqualTo: currentUserId)
+          .get();
+
+      return res.docs.map((e) => e.data()).toList();
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }
