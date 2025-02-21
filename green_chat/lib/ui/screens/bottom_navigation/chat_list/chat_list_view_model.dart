@@ -11,12 +11,17 @@ class ChatListViewModel extends BaseViewModle {
   ChatListViewModel(this._db, this.currentUser) {
     fetchUser();
   }
-
-  fetchUser(){
+  List<UserModel> _users = [];
+  List<UserModel> get users => _users;
+  fetchUser() async {
     try {
-       
+      final res = await _db.fetchUsers(currentUser.uid!);
+      if (res.isNotEmpty) {
+        _users = res.map((e) => UserModel.fromMap(e!)).toList();
+        notifyListeners();
+      }
     } catch (e) {
-     _logger.i(e.toString()); 
+      _logger.i(e.toString());
     }
   }
 }

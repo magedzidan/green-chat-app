@@ -2,48 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:green_chat/core/constants/strings.dart';
 import 'package:green_chat/core/constants/styles.dart';
+import 'package:green_chat/core/models/user_model.dart';
+import 'package:green_chat/core/services/database_service.dart';
+import 'package:green_chat/ui/screens/bottom_navigation/chat_list/chat_list_view_model.dart';
+import 'package:green_chat/ui/screens/other/user_provider.dart';
 import 'package:green_chat/ui/widgets/text_form_field.dart';
+import 'package:provider/provider.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 1.sw * 0.05, vertical: 10.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          40.verticalSpace,
-          Text(
-            'Chats',
-            style: h.copyWith(fontSize: 25, color: Color(0xFF393A44)),
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    return ChangeNotifierProvider(
+      create: (context) => ChatListViewModel(DatabaseSerice(), currentUser!),
+      child: Consumer<ChatListViewModel>(builder: (context, model, _) {
+        return Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: 1.sw * 0.05, vertical: 10.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              40.verticalSpace,
+              Text(
+                'Chats',
+                style: h.copyWith(fontSize: 25, color: Color(0xFF393A44)),
+              ),
+              10.verticalSpace,
+              CustomFormField(
+                enable_suffix_icon: true,
+                hintText: 'Search here...',
+              ),
+              10.verticalSpace,
+              Expanded(
+                child: ListView.separated(
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                    itemCount: model.users.length,
+                    separatorBuilder: (context, index) => 8.verticalSpace,
+                    itemBuilder: (context, index) {
+                      final user = model.users[index];
+                      return ChatTile(
+                        user: user,
+                        onTap: () => Navigator.pushNamed(context, chatRoom),
+                      );
+                    }),
+              )
+            ],
           ),
-          10.verticalSpace,
-          CustomFormField(
-            enable_suffix_icon: true,
-            hintText: 'Search here...',
-          ),
-          10.verticalSpace,
-          Expanded(
-            child: ListView.separated(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                itemCount: 14,
-                separatorBuilder: (context, index) => 8.verticalSpace,
-                itemBuilder: (context, index) => ChatTile(onTap: ()=>  Navigator.pushNamed(context, chatRoom),)),
-          )
-        ],
-      ),
+        );
+      }),
     );
   }
 }
 
 class ChatTile extends StatelessWidget {
   const ChatTile({
-    super.key, this.onTap,
+    super.key,
+    this.onTap,
+    required this.user,
   });
 
   final void Function()? onTap;
+  final UserModel user;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -54,12 +75,12 @@ class ChatTile extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: Colors.grey,
         radius: 25,
-        child: Text('s'),
+        child: Text(user.name![0]),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Ava Martinez',
+          Text(user.name!,
               style: TextStyle(
                   color: Color(0xff393A44),
                   fontSize: 16,
