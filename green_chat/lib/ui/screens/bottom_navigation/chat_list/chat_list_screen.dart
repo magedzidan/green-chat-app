@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:green_chat/core/constants/strings.dart';
 import 'package:green_chat/core/constants/styles.dart';
+import 'package:green_chat/core/enums/enums.dart';
 import 'package:green_chat/core/models/user_model.dart';
 import 'package:green_chat/core/services/database_service.dart';
 import 'package:green_chat/ui/screens/bottom_navigation/chat_list/chat_list_view_model.dart';
@@ -33,21 +34,30 @@ class ChatListScreen extends StatelessWidget {
               CustomFormField(
                 enable_suffix_icon: true,
                 hintText: 'Search here...',
+                onChanged: model.searchUser
               ),
               10.verticalSpace,
-              Expanded(
-                child: ListView.separated(
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                    itemCount: model.users.length,
-                    separatorBuilder: (context, index) => 8.verticalSpace,
-                    itemBuilder: (context, index) {
-                      final user = model.users[index];
-                      return ChatTile(
-                        user: user,
-                        onTap: () => Navigator.pushNamed(context, chatRoom),
-                      );
-                    }),
-              )
+              model.state == ViewState.loading
+                  ? Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Expanded(
+                      child: ListView.separated(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                          itemCount: model.filteredUseres.length,
+                          separatorBuilder: (context, index) => 8.verticalSpace,
+                          itemBuilder: (context, index) {
+                            final user = model.filteredUseres[index];
+                            return ChatTile(
+                              user: user,
+                              onTap: () =>
+                                  Navigator.pushNamed(context, chatRoom),
+                            );
+                          }),
+                    )
             ],
           ),
         );

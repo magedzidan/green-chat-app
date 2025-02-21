@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:green_chat/core/constants/strings.dart';
 import 'package:green_chat/ui/screens/bottom_navigation/bottom_navigation_view_model.dart';
+import 'package:green_chat/ui/screens/other/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavigationScreen extends StatelessWidget {
@@ -9,11 +10,15 @@ class BottomNavigationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+
     return ChangeNotifierProvider(
       create: (context) => BottomNavigationViewModel(),
       child: Consumer<BottomNavigationViewModel>(
         builder: (context, viewModel, child) {
-          return Scaffold(
+          return currentUser==null? Center(
+            child: CircularProgressIndicator(),
+          ): Scaffold(
             body: viewModel
                 .screens[viewModel.currentindex ?? 0], // ✅ Correct usage
             bottomNavigationBar: Container(
