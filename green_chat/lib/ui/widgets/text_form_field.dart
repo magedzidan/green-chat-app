@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomFormField extends StatelessWidget {
   const CustomFormField({
-    Key? key,
+    super.key,
     this.onChanged,
     this.hintText,
     this.focusNode,
@@ -13,7 +13,7 @@ class CustomFormField extends StatelessWidget {
     this.controller,
     this.ontap,
      this.sendTap,
-  }) : super(key: key);
+  });
 
   final void Function(String)? onChanged;
   final String? hintText;
