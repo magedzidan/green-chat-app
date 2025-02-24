@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +10,7 @@ import 'package:green_chat/core/services/chat_service.dart';
 import 'package:green_chat/ui/screens/bottom_navigation/chat_list/chat_room/chat_screen_view_model.dart';
 import 'package:green_chat/ui/screens/other/user_provider.dart';
 import 'package:green_chat/ui/widgets/text_form_field.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -165,7 +167,7 @@ class chatBubble extends StatelessWidget {
                   color: isCurrentUser ? Colors.white : Colors.black),
             ),
             5.verticalSpace,
-            Text(message.timeStamp.toString(),
+            Text(DateFormat('HH:mm a').format(message.timeStamp!),
                 style: isCurrentUser
                     ? small.copyWith(color: Colors.white.withOpacity(0.8))
                     : small.copyWith(

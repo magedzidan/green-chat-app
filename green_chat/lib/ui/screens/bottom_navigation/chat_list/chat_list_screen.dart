@@ -16,7 +16,7 @@ class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
-    return ChangeNotifierProvider(
+    return ChangeNotifierProvider<ChatListViewModel>(
       create: (context) => ChatListViewModel(DatabaseSerice(), currentUser!),
       child: Consumer<ChatListViewModel>(builder: (context, model, _) {
         return Padding(

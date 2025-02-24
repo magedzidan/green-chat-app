@@ -9,6 +9,7 @@ import 'package:green_chat/core/services/auth_service.dart';
 import 'package:green_chat/ui/screens/auth/Login/login_screen_viewmodel.dart';
 import 'package:green_chat/ui/widgets/custom_button.dart';
 import 'package:green_chat/ui/widgets/text_form_field.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
